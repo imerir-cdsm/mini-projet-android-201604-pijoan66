@@ -63,6 +63,8 @@ On en ajoute les chemin suivants :
     Un album en particulier.
   * `/albums/<aid>/tracks`  
     Liste des pistes d'un album.
+  * `/genres/<gid>/albums`  
+    Liste des albums d'un genre.
 
 La ressource album reste inchangée ; on ajoute par contre la description d'une piste : 
 
@@ -71,6 +73,14 @@ La ressource album reste inchangée ; on ajoute par contre la description d'une 
       "duration": INT
     }
 
+Il y a par ailleurs deux appels particuliers pour modifier la base de données :
+
+  * `/db-reset`  
+    Efface la base de données et charge le petit ensemble de données tests du partiel de Lundi avec 2 artistes, 4 albums.
+  * `/db-reset-large`  
+    Même chose, mais avec beaucoup plus d'artistes, de genres, d'albums, d'images.
+
+Idéalement vous ne devriez pas utiliser ces appels car vous pourriez contrarier vos camarades. Ma proposition : Mercredi je vous laisse le petit ensemble ; Jeudi je vous donne le grand.
 
 #### Liens utiles
 
