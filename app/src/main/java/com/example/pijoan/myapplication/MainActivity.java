@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "ONE");
-        adapter.addFragment(new TwoFragment(), "TWO");
+        adapter.addFragment(new OneFragment(), "Artiste");
+        adapter.addFragment(new TwoFragment(), "Albums");
+        adapter.addFragment(new ThreeFragment(), "Genre");
         viewPager.setAdapter(adapter);
     }
 
