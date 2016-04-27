@@ -3,17 +3,24 @@ package com.example.pijoan.myapplication;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +45,8 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
 
     AlbumAdapter myadapter;
 
+    AQuery aq;
+
     public OneFragment() {
         // Required empty public constructor
     }
@@ -56,8 +65,29 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
 
         realm = Realm.getInstance(realmConfiguration);
 
+        Recherche();
+
         // Inflate the layout for this fragment
         return v;
+    }
+
+    public void Recherche() {
+        String url = "http://mysterious-thicket-90159.herokuapp.com/albums";
+        aq = new AQuery(getContext());
+        aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+        public void callback(String url, JSONObject json, AjaxStatus status) {
+                if (json != null) {
+                    String JsonString = json.toString();
+                    Log.e("Test", JsonString);
+                } else {
+                    //ajax error, show error code
+                    Log.e("Error", "C'est une grosse erreur");
+                    Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
     }
 
     @Override
