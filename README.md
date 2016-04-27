@@ -91,6 +91,7 @@ La ressource album reste inchangée ; on ajoute par contre la description d'une 
   - [ ] Alimenter les données à partir du WebService
   - [ ] Penser à garder une copie locale des données avec Realm pour un accès hors ligne (*"mode avion"*)
   - [ ] L'affichage des images (photo d'album et d'artiste) est souhaité mais, à choisir, la persistance des données avec Realm est préférée.
+  - [ ] Commentez le code et ayez une conception correcte. La qualité du code importe autant que son bon fonctionnement.
 
 ## Version de Android Studio
 
