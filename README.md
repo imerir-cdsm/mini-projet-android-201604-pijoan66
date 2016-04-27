@@ -38,10 +38,44 @@ Le sujet utilise le même Web Service que vous avez réalisé Lundi après-midi 
 
 **Attention à la persistance des données :** votre application doit continuer à fonctionner lorsque vous n'avez pas accès au réseau. Il est donc important que vous gardiez une copie locale des données téléchargées du WebService. Pour cela **vous utiliserez Realm**.
 
-Liens utiles :
-  
+#### Ajouts par rapport au partiel de WebService
+
+La ressource `Track` (piste d'un album) a été ajoutée. Celle-ci n'était pas présente dans le sujet du partiel Lundi après-midi. Par ailleurs, le mockup suppose que l'on puisse récupérer tous les albums. Le sujet de Lundi ne prévoyait pas cela. Ces *oublis* permettaient que le sujet reste réalisable dans le temps imparti.
+
+Donc aux chemins suivants :
+
+  * `/genres`  
+    Liste des genres.
+  * `/genres/<gid>`  
+    Un genre.
+  * `/artists`  
+    Liste des artistes.
+  * `/artists/<pid>`  
+    Un artiste.
+  * `/artists/<pid>/albums`  
+    Liste des albums d'un artiste.
+    
+On en ajoute les chemin suivants :
+
+  * `/albums`  
+    Liste des albums.
+  * `/albums/<aid>`  
+    Un album en particulier.
+  * `/albums/<aid>/tracks`  
+    Liste des pistes d'un album.
+
+La ressource album reste inchangée ; on ajoute par contre la description d'une piste : 
+
+    TRACK := {
+      "title": STRING,
+      "duration": INT
+    }
+
+
+#### Liens utiles
+
   * [http://mysterious-thicket-90159.herokuapp.com/](http://mysterious-thicket-90159.herokuapp.com/)
-  * [Sujet Partiel Web Service](https://e-learning.imerir.com/mod/page/view.php?id=9939)
+  * [Sujet Partiel WebService](https://e-learning.imerir.com/mod/page/view.php?id=9939)
 
 ### Points optionnels
 
