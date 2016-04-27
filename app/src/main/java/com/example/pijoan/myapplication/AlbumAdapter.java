@@ -1,6 +1,7 @@
 package com.example.pijoan.myapplication;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +57,12 @@ public class AlbumAdapter extends BaseAdapter {
 
         Album album = albums.get(position);
 
-        if (album == null) {
+        if (album != null) {
             ((TextView) currentView.findViewById(R.id.TitreAlbum)).setText(album.getTitre());
+            Log.e("test",album.getTitre());
         }
 
         return currentView;
     }
+
 }

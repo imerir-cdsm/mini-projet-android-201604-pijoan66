@@ -73,7 +73,7 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
             ListAlbum = (ListView) v.findViewById(R.id.ListAlbum);
             ListAlbum.setAdapter(myadapter);
             ListAlbum.setOnItemClickListener(OneFragment.this);
-            ListAlbum.deferNotifyDataSetChanged();
+            myadapter.notifyDataSetChanged();
             ListAlbum.invalidate();
         }
     }
@@ -116,6 +116,7 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
         Album album = realm.where(Album.class).equalTo("titre", modifiedAlbum.getTitre()).findFirst();
 
         realm.beginTransaction();
+        album.setTitre(album.getTitre());
         realm.commitTransaction();
 
         updateAlbums();
