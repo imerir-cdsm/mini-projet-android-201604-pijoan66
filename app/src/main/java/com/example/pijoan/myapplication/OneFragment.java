@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.realm.Realm;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class OneFragment extends Fragment {
-
+    Realm realm;
 
     public OneFragment() {
         // Required empty public constructor
