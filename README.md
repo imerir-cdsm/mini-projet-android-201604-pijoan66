@@ -56,7 +56,7 @@ Liens utiles :
     - le filtre de recherche et la page Genres sont des bonus
   - [ ] Alimenter les données à partir du WebService
   - [ ] Penser à garder une copie locale des données avec Realm pour un accès hors ligne (*"mode avion"*)
-  - [ ] L'affichage des images (photo d'album et d'artiste) est souhaité mais à choisir la persistance des données avec Realm est préférée
+  - [ ] L'affichage des images (photo d'album et d'artiste) est souhaité mais, à choisir, la persistance des données avec Realm est préférée.
 
 ## Version de Android Studio
 
@@ -64,7 +64,7 @@ Pour votre confort, il est recommandé que vous utilisiez la [version 2.x](http:
 
 ## Questions ?
 
-Si vous avez des questions : [pierre.grabolosa@imerir.com](mailto:pierre.grabolosa@imerir.com) ou par <a href="skype:maccatalan?chat">Skype à *maccatalan*</a>.
+Si vous avez des questions : [pierre.grabolosa@imerir.com](mailto:pierre.grabolosa@imerir.com) ou Skype (voir e-learning).
 
 Par ailleurs, j'essaierai d'être présent physiquement :
 
