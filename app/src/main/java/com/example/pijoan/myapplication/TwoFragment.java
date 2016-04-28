@@ -3,11 +3,13 @@ package com.example.pijoan.myapplication;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,7 +28,7 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TwoFragment extends Fragment {
+public class TwoFragment extends Fragment implements AdapterView.OnItemClickListener{
     Realm realm;
     ListView listArtiste;
     Artiste artiste;
@@ -49,6 +51,7 @@ public class TwoFragment extends Fragment {
 
         listArtiste = (ListView) v.findViewById(R.id.ListArtiste);
         listArtiste.setAdapter(adaptArtiste);
+        listArtiste.setOnItemClickListener(this);
 
         return v;
     }
@@ -61,6 +64,18 @@ public class TwoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        recherche();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getDefaultInstance();
+                RealmResults<Artiste> artistes = realm.allObjects(Artiste.class);
+                adaptArtiste.setData(artistes);
+                adaptArtiste.notifyDataSetChanged();
+                listArtiste.invalidate();
+            }
+        }, 200);
 
 
     }
@@ -85,6 +100,7 @@ public class TwoFragment extends Fragment {
                             String jsonString = json.toString();
 
                             realm.beginTransaction();
+                            realm.deleteAll();
                             for (int i = 0; i<json.length(); i++) {
                                 try {
                                     JSONObject artisteRow = json.getJSONObject(i);
@@ -122,4 +138,8 @@ public class TwoFragment extends Fragment {
         task.execute("http://mysterious-thicket-90159.herokuapp.com/artists");
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.e("TwoFragment", "item clicked "+position);
+    }
 }
