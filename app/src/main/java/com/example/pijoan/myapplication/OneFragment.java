@@ -1,7 +1,9 @@
 package com.example.pijoan.myapplication;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +34,6 @@ import java.util.Collection;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 
@@ -38,13 +41,9 @@ import io.realm.RealmResults;
  * A simple {@link Fragment} subclass.
  */
 public class OneFragment extends Fragment implements AdapterView.OnItemClickListener {
-    View v;
-
-    Realm realm;
     ListView ListAlbum;
-
     AlbumAdapter myadapter;
-
+    Album album;
     AQuery aq;
 
     public OneFragment() {
@@ -55,71 +54,49 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_one, container, false);
+        View v = inflater.inflate(R.layout.fragment_one, container, false);
 
-        // Inflate the layout for this fragment
+        myadapter = new AlbumAdapter(getContext());
+
+        ListAlbum = (ListView) v.findViewById(R.id.ListAlbum);
+        ListAlbum.setAdapter(myadapter);
+        ListAlbum.setOnItemClickListener(this);
+
         return v;
-    }
-
-    public void recherche() {
-        String url = "http://mysterious-thicket-90159.herokuapp.com/albums";
-        aq = new AQuery(v);
-        aq.ajax(url, JSONArray.class, new AjaxCallback<JSONArray>() {
-            @Override
-            public void callback(String url, JSONArray json, AjaxStatus status) {
-                if (json != null) {
-                    String JsonString = json.toString();
-                    Log.e("AQuery", JsonString);
-                } else {
-                    //ajax error, show error code
-                    Log.e("Error", "C'est une grosse erreur " + status.getMessage());
-                    Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recherche();
-
-        RealmConfiguration.Builder builder = new RealmConfiguration.Builder(getContext());
-        builder.schemaVersion(1);
-        builder.deleteRealmIfMigrationNeeded();
-        RealmConfiguration realmConfiguration = builder.build();
-        Realm.setDefaultConfiguration(realmConfiguration);
-
-        realm = Realm.getInstance(realmConfiguration);
-
-        if (myadapter == null) {
-            myadapter = new AlbumAdapter(getContext());
-        }
-        List<Album> albums = loadAlbums();
-        myadapter.setData(albums);
-
-        ListAlbum = (ListView) v.findViewById(R.id.ListAlbum);
-        ListAlbum.setAdapter(myadapter);
-        ListAlbum.setOnItemClickListener(OneFragment.this);
-        myadapter.notifyDataSetChanged();
-        ListAlbum.invalidate();
-
-        updateAlbums();
+        //updateAlbums();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        recherche();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getDefaultInstance();
+                RealmResults<Album> albums = realm.allObjects(Album.class);
+                myadapter.setData(albums);
+                myadapter.notifyDataSetChanged();
+                ListAlbum.invalidate();
+            }
+        }, 200);
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        realm.close();
     }
 
     private List<Album> loadAlbums() {
+        Realm realm = Realm.getDefaultInstance();
         RealmResults<Album> albumsResult = realm.where(Album.class).findAll();
         realm.beginTransaction();
         albumsResult.deleteAllFromRealm();
@@ -142,7 +119,60 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
         return new ArrayList<Album>(realmalbums);
     }
 
+    public void recherche() {
+        AsyncTask<String, Void, Void> task = new AsyncTask<String, Void, Void>() {
+            @Override
+            protected Void doInBackground(String... params) {
+                String url = params[0];
+                aq = new AQuery(getView());
+                aq.ajax(url, JSONArray.class, new AjaxCallback<JSONArray>() {
+                    @Override
+                    public void callback(String url, JSONArray json, AjaxStatus status) {
+                        Realm realm = Realm.getDefaultInstance();
+
+                        if (json != null) {
+                            String JsonString = json.toString();
+
+                            realm.beginTransaction();
+                            for (int i = 0; i < json.length(); i++) {
+                                try {
+                                    JSONObject albumRow = json.getJSONObject(i);
+                                    album = realm.createObject(Album.class);
+                                    album.setTitle(albumRow.getString("title"));
+                                } catch (JSONException je) {
+                                    je.printStackTrace();
+                                }
+                            }
+                            realm.commitTransaction();
+                        } else {
+                            //ajax error, show error code
+                            Log.e("Error", "Ajax error :" + status.getMessage());
+                            Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+                        }
+
+                        RealmResults<Album> albums = realm.allObjects(Album.class);
+                        Log.e("AQuery", "Nombre albums : " + albums.size());
+                    }
+                });
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                RealmResults<Album> albums = Realm.getDefaultInstance().allObjects(Album.class);
+                myadapter.setData(albums);
+                myadapter.notifyDataSetChanged();
+                ListAlbum.invalidate();
+            }
+        };
+
+        task.execute("http://mysterious-thicket-90159.herokuapp.com/albums");
+    }
+
     public void updateAlbums() {
+        Realm realm = Realm.getDefaultInstance();
         RealmResults<Album> albums =realm.where(Album.class).findAll();
         myadapter.setData(albums);
         myadapter.notifyDataSetChanged();
@@ -151,13 +181,14 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Album modifiedAlbum = (Album)myadapter.getItem(position);
-        Album album = realm.where(Album.class).equalTo("titre", modifiedAlbum.getTitre()).findFirst();
+        /*Album modifiedAlbum = (Album)myadapter.getItem(position);
+        Album album = realm.where(Album.class).equalTo("titre", modifiedAlbum.getTitle()).findFirst();
 
         realm.beginTransaction();
-        album.setTitre(album.getTitre());
+        album.setTitle(album.getTitle());
         realm.commitTransaction();
 
-        updateAlbums();
+        updateAlbums();*/
+        Log.e("OneFragment", "item clicked "+position);
     }
 }

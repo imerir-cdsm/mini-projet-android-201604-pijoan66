@@ -7,13 +7,13 @@ import io.realm.RealmObject;
  */
 public class Album extends RealmObject {
 
-    private String titre;
+    private String title;
 
-    public String getTitre() {
-        return titre;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

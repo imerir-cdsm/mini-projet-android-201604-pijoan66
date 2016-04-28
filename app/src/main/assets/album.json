@@ -1,5 +1,10 @@
 [
-  {"titre" : "Test"},
-  {"titre" : "Nouvel album"},
-  {"titre" : "Test 2"}
+  {"titre" : "Test",
+  "Vote" : "21"},
+  {"titre" : "Beyond The Sea",
+  "Vote" : "22"},
+  {"titre" : "Katy Perry",
+  "Vote" : "19"},
+  {"titre" : "Test 2",
+  "Vote" : "23"}
 ]
