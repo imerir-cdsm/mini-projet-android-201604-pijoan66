@@ -20,7 +20,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,32 +57,22 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_one, container, false);
 
-        RealmConfiguration.Builder builder = new RealmConfiguration.Builder(getContext());
-        builder.schemaVersion(1);
-        builder.deleteRealmIfMigrationNeeded();
-        RealmConfiguration realmConfiguration = builder.build();
-        Realm.setDefaultConfiguration(realmConfiguration);
-
-        realm = Realm.getInstance(realmConfiguration);
-
-        Recherche();
-
         // Inflate the layout for this fragment
         return v;
     }
 
-    public void Recherche() {
+    public void recherche() {
         String url = "http://mysterious-thicket-90159.herokuapp.com/albums";
-        aq = new AQuery(getContext());
-        aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq = new AQuery(v);
+        aq.ajax(url, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
-        public void callback(String url, JSONObject json, AjaxStatus status) {
+            public void callback(String url, JSONArray json, AjaxStatus status) {
                 if (json != null) {
                     String JsonString = json.toString();
-                    Log.e("Test", JsonString);
+                    Log.e("AQuery", JsonString);
                 } else {
                     //ajax error, show error code
-                    Log.e("Error", "C'est une grosse erreur");
+                    Log.e("Error", "C'est une grosse erreur " + status.getMessage());
                     Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
                 }
 
@@ -91,21 +81,36 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recherche();
+
+        RealmConfiguration.Builder builder = new RealmConfiguration.Builder(getContext());
+        builder.schemaVersion(1);
+        builder.deleteRealmIfMigrationNeeded();
+        RealmConfiguration realmConfiguration = builder.build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+        realm = Realm.getInstance(realmConfiguration);
 
         if (myadapter == null) {
-            List<Album> albums = loadAlbums();
-
             myadapter = new AlbumAdapter(getContext());
-            myadapter.setData(albums);
-
-            ListAlbum = (ListView) v.findViewById(R.id.ListAlbum);
-            ListAlbum.setAdapter(myadapter);
-            ListAlbum.setOnItemClickListener(OneFragment.this);
-            myadapter.notifyDataSetChanged();
-            ListAlbum.invalidate();
         }
+        List<Album> albums = loadAlbums();
+        myadapter.setData(albums);
+
+        ListAlbum = (ListView) v.findViewById(R.id.ListAlbum);
+        ListAlbum.setAdapter(myadapter);
+        ListAlbum.setOnItemClickListener(OneFragment.this);
+        myadapter.notifyDataSetChanged();
+        ListAlbum.invalidate();
+
+        updateAlbums();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -115,6 +120,10 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
     }
 
     private List<Album> loadAlbums() {
+        RealmResults<Album> albumsResult = realm.where(Album.class).findAll();
+        realm.beginTransaction();
+        albumsResult.deleteAllFromRealm();
+        realm.commitTransaction();
         InputStream stream;
         try {
             stream = getContext().getAssets().open("album.json");
