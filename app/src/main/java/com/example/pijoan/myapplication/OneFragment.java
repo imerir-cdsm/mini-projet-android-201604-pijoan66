@@ -41,8 +41,8 @@ import io.realm.RealmResults;
  * A simple {@link Fragment} subclass.
  */
 public class OneFragment extends Fragment implements AdapterView.OnItemClickListener {
-    ListView ListAlbum;
-    AlbumAdapter myadapter;
+    ListView listAlbum;
+    AlbumAdapter adaptAlbum;
     Album album;
     AQuery aq;
 
@@ -56,11 +56,11 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_one, container, false);
 
-        myadapter = new AlbumAdapter(getContext());
+        adaptAlbum = new AlbumAdapter(getContext());
 
-        ListAlbum = (ListView) v.findViewById(R.id.ListAlbum);
-        ListAlbum.setAdapter(myadapter);
-        ListAlbum.setOnItemClickListener(this);
+        listAlbum = (ListView) v.findViewById(R.id.ListAlbum);
+        listAlbum.setAdapter(adaptAlbum);
+        listAlbum.setOnItemClickListener(this);
 
         return v;
     }
@@ -82,9 +82,9 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
             public void run() {
                 Realm realm = Realm.getDefaultInstance();
                 RealmResults<Album> albums = realm.allObjects(Album.class);
-                myadapter.setData(albums);
-                myadapter.notifyDataSetChanged();
-                ListAlbum.invalidate();
+                adaptAlbum.setData(albums);
+                adaptAlbum.notifyDataSetChanged();
+                listAlbum.invalidate();
             }
         }, 200);
 
@@ -162,9 +162,9 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
                 super.onPostExecute(aVoid);
 
                 RealmResults<Album> albums = Realm.getDefaultInstance().allObjects(Album.class);
-                myadapter.setData(albums);
-                myadapter.notifyDataSetChanged();
-                ListAlbum.invalidate();
+                adaptAlbum.setData(albums);
+                adaptAlbum.notifyDataSetChanged();
+                listAlbum.invalidate();
             }
         };
 
@@ -174,9 +174,9 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
     public void updateAlbums() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Album> albums =realm.where(Album.class).findAll();
-        myadapter.setData(albums);
-        myadapter.notifyDataSetChanged();
-        ListAlbum.invalidate();
+        adaptAlbum.setData(albums);
+        adaptAlbum.notifyDataSetChanged();
+        listAlbum.invalidate();
     }
 
     @Override

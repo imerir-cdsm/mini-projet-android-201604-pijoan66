@@ -7,13 +7,13 @@ import io.realm.RealmObject;
  */
 public class Artiste extends RealmObject {
 
-    private String name;
+    private String fname;
 
-    public String getName() {
-        return name;
+    public String getFname() {
+        return fname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFname(String fname) {
+        this.fname = fname;
     }
 }

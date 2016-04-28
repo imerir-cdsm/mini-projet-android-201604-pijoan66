@@ -28,7 +28,7 @@ public class ArtisteAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (artistes != null) {
+        if (artistes == null) {
             return 0;
         }
         else {
@@ -38,7 +38,7 @@ public class ArtisteAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if (artistes == null || artistes.get(position) ==null) {
+        if (artistes == null || artistes.get(position) == null) {
             return null;
         }
         return artistes.get(position);
@@ -57,8 +57,8 @@ public class ArtisteAdapter extends BaseAdapter {
         Artiste artiste = artistes.get(position);
 
         if (artiste != null) {
-            ((TextView) currentView.findViewById(R.id.TitreArtiste)).setText(artiste.getName());
-            Log.e("Artiste", artiste.getName());
+            ((TextView) currentView.findViewById(R.id.TitreArtiste)).setText(artiste.getFname());
+            Log.e("Artiste", artiste.getFname());
         }
 
         return currentView;
