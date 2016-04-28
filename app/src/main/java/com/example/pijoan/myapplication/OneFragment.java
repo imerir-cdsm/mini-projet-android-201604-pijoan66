@@ -55,10 +55,11 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_one, container, false);
-
+        //Définition de l'adapter
         adaptAlbum = new AlbumAdapter(getContext());
-
+        //Liaison de la ListView à la List du fichier XML
         listAlbum = (ListView) v.findViewById(R.id.ListAlbum);
+        //Ajout de l'adapter à la List
         listAlbum.setAdapter(adaptAlbum);
         listAlbum.setOnItemClickListener(this);
 
@@ -71,6 +72,7 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
         //updateAlbums();
     }
 
+    //onResume() fonctionne à chaque chargement de la page
     @Override
     public void onResume() {
         super.onResume();
@@ -119,39 +121,44 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
         return new ArrayList<Album>(realmalbums);
     }
 
+    //Fonction qui va utiliser AQuery pour chercher dans la base de donnée la liste des albums
     public void recherche() {
         AsyncTask<String, Void, Void> task = new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
                 String url = params[0];
-                aq = new AQuery(getView());
+                aq = new AQuery(getView()); //Déclaration du Aquery
                 aq.ajax(url, JSONArray.class, new AjaxCallback<JSONArray>() {
                     @Override
                     public void callback(String url, JSONArray json, AjaxStatus status) {
-                        Realm realm = Realm.getDefaultInstance();
+                        Realm realm = Realm.getDefaultInstance(); //Config de Realm
 
                         if (json != null) {
-                            String JsonString = json.toString();
-
+                            //Debut d'écriture dans Realm
                             realm.beginTransaction();
+                            //Suppression de tous ceux contient le Realm
                             realm.deleteAll();
                             for (int i = 0; i < json.length(); i++) {
                                 try {
                                     JSONObject albumRow = json.getJSONObject(i);
+                                    //Création d'un object de la classe Album dans le Realm
                                     album = realm.createObject(Album.class);
+                                    //Attribution du nom à l'objet album
                                     album.setTitle(albumRow.getString("title"));
                                 } catch (JSONException je) {
                                     je.printStackTrace();
                                 }
                             }
+                            //Envoie des données ecrite juste avant dans le Realm
                             realm.commitTransaction();
                         } else {
-                            //ajax error, show error code
+                            //Message d'erreur lors d'erreur d'Ajax
                             Log.e("Error", "Ajax error :" + status.getMessage());
                             Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
                         }
-
+                        //Récupération des données des objest de la classe Album pour le RealmResult
                         RealmResults<Album> albums = realm.allObjects(Album.class);
+                        //Affichage du nombre d'artiste
                         Log.e("AQuery", "Nombre albums : " + albums.size());
                     }
                 });
@@ -168,10 +175,11 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
                 listAlbum.invalidate();
             }
         };
-
+        //Url pour récuperer la liste des albums
         task.execute("http://mysterious-thicket-90159.herokuapp.com/albums");
     }
 
+    //Fonction pour mettre à jour la liste des albums
     public void updateAlbums() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Album> albums =realm.where(Album.class).findAll();
@@ -180,16 +188,10 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
         listAlbum.invalidate();
     }
 
+    //Fonction lors d'un click sur un item de la list
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        /*Album modifiedAlbum = (Album)myadapter.getItem(position);
-        Album album = realm.where(Album.class).equalTo("titre", modifiedAlbum.getTitle()).findFirst();
-
-        realm.beginTransaction();
-        album.setTitle(album.getTitle());
-        realm.commitTransaction();
-
-        updateAlbums();*/
+        //Affiche la position du click
         Log.e("OneFragment", "item clicked "+position);
     }
 }

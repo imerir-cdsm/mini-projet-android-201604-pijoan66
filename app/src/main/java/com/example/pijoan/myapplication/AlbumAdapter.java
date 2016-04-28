@@ -58,7 +58,9 @@ public class AlbumAdapter extends BaseAdapter {
         Album album = albums.get(position);
 
         if (album != null) {
+            //Liaision du TextView à son TextView du fichier XML //Et ajout du titre au TextView
             ((TextView) currentView.findViewById(R.id.TitreAlbum)).setText(album.getTitle());
+            //Affichage des titres trouver dans la base de donnée
             Log.e("test Titre", album.getTitle());
         }
 

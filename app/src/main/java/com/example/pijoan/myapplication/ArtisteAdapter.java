@@ -57,7 +57,9 @@ public class ArtisteAdapter extends BaseAdapter {
         Artiste artiste = artistes.get(position);
 
         if (artiste != null) {
+            //Liaision du TextView à son TextView du fichier XML //Et ajout du nom au TextView
             ((TextView) currentView.findViewById(R.id.TitreArtiste)).setText(artiste.getFname());
+            //Affichage des artistes trouver dans la base de donnée
             Log.e("Artiste", artiste.getFname());
         }
 

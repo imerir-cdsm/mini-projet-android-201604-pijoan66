@@ -26,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //Configuration du Realm
         Realm.setDefaultConfiguration(new RealmConfiguration.Builder(this).build());
-
+        //Liaison de l'activity à la classe
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Fonction pour déclarer le nombre de page différente dans la tab bar et les noms des pages
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        //Ajout de fragment pour chaque page
         adapter.addFragment(new OneFragment(), "Albums");
         adapter.addFragment(new TwoFragment(), "Artistes");
         adapter.addFragment(new ThreeFragment(), "Genres");
