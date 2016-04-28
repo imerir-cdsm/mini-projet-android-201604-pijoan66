@@ -134,6 +134,7 @@ public class OneFragment extends Fragment implements AdapterView.OnItemClickList
                             String JsonString = json.toString();
 
                             realm.beginTransaction();
+                            realm.deleteAll();
                             for (int i = 0; i < json.length(); i++) {
                                 try {
                                     JSONObject albumRow = json.getJSONObject(i);

@@ -59,7 +59,7 @@ public class AlbumAdapter extends BaseAdapter {
 
         if (album != null) {
             ((TextView) currentView.findViewById(R.id.TitreAlbum)).setText(album.getTitle());
-            Log.e("test", album.getTitle());
+            Log.e("test Titre", album.getTitle());
         }
 
         return currentView;
